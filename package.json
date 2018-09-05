@@ -1,0 +1,9 @@
+{
+  "name": "team-tdd",
+  "version": "0.0.1",
+  "description": "A JavaScript application intended to showcase TDD in a team environment.",
+  "private": true,
+  "keywords": [],
+  "author": "Gervel Giva",
+  "license": "ISC"
+}
