@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "A JavaScript application intended to showcase TDD in a team environment.",
   "private": true,
+  "scripts": {
+    "start": "http-server -c-1"
+  },
   "keywords": [],
   "author": "Gervel Giva",
   "license": "ISC"
