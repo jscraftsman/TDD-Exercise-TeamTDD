@@ -5,23 +5,16 @@
 
     QUnit.module('Main');
 
-    QUnit.test('Has an Main instance', assert => {
+    QUnit.test('has a Main instance', assert => {
         assert.notEqual(Main, undefined);
     });
 
-    QUnit.test('Main has a start() function', assert => {
+    QUnit.test('has a start() function', assert => {
         assert.notEqual(Main.start, undefined);
     });
 
-    QUnit.test('Main.start() will call App.initialize() only once', assert => {
+    QUnit.test('has a Main.start() will invoke App.initialize()', assert => {
         let spy = sinon.spy(App, 'initialize');
-
-        Main.start();
-        assert.equal(spy.callCount, 1);
-    });
-
-    QUnit.test('Main.start() will call View.initialize only once', assert => {
-        let spy = sinon.spy(View, 'initialize');
 
         Main.start();
         assert.equal(spy.callCount, 1);

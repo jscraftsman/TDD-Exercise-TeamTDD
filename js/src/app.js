@@ -20,10 +20,16 @@
 
         updateInput: function (input) {
             App.MODULES.InputModule.setInput(input);
+        },
+
+        process: function() {
+            // @TODO: Should check if Input is valid and show error accordingly
+            let leftOperand = App.MODULES.InputModule.getLeftOperand();
+            let operator = App.MODULES.InputModule.getOperator();
+            let rightOperand = App.MODULES.InputModule.getRightOperand();
+            App.MODULES.ArithmeticModule.calculate(leftOperand, operator, rightOperand);
         }
     };
-
-    /* Private variables */
 
     /* Private functions */
     function throwIfAModuleIsMissing(modules) {

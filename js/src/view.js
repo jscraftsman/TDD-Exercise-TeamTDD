@@ -7,6 +7,7 @@
         ERRORS: {
             INVALID_INITIALIZATION: 'Invalid initialziation of View! App instance must be passed as an argument.'
         },
+        
         APP_INSTANCE: null,
 
         initialize: function (app) {
@@ -16,8 +17,8 @@
         },
 
         inputChangeHandler: function (e) {
-            // Use e.target.value to obtain the data
             View.APP_INSTANCE.updateInput(e.target.value);
+            View.APP_INSTANCE.process();
         }
 
     };

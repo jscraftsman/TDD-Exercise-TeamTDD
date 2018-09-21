@@ -5,22 +5,22 @@
 
     QUnit.module('App');
 
-    QUnit.test('Has an App instance', assert => {
+    QUnit.test('has an App instance', assert => {
         assert.notEqual(App, undefined);
     });
 
-    QUnit.test('App has an initialize() function', assert => {
+    QUnit.test('has an initialize() function', assert => {
         assert.notEqual(App.initialize, undefined);
     });
 
-    QUnit.test('App has a list of static error messages', assert => {
+    QUnit.test('has a list of static error messages', assert => {
         assert.equal(App.ERRORS.INVALID_INITIALIZATION, 'Invalid initialization of App! Modules must be passed as an argument.');
         assert.equal(App.ERRORS.INPUT_MODULE_MISSING, 'InputModule is missing!');
         assert.equal(App.ERRORS.Arithmetic_MODULE_MISSING, 'ArithmeticModule is missing!');
         assert.equal(App.ERRORS.OUTPUT_MODULE_MISSING, 'OutputModule is missing!');
     });
 
-    QUnit.test('App.initialize() throws exception if has an empty argument', assert => {
+    QUnit.test('has a initialize() function that throws an exception if it has an empty argument', assert => {
         function functionBlock() {
             App.initialize();
         }
@@ -31,7 +31,7 @@
         assert.throws(functionBlock, expectedMatcher);
     });
 
-    QUnit.test('App.initialize() throws exception if InputModule is missing', assert => {
+    QUnit.test('has an initialize() function that throws an exception if InputModule is missing', assert => {
         let expectedMatcher = err => err === App.ERRORS.INPUT_MODULE_MISSING;
 
         function functionBlock() {
@@ -46,7 +46,7 @@
         assert.throws(functionBlock, expectedMatcher);
     });
 
-    QUnit.test('App.initialize() throws exception if ArithmeticModule is missing', assert => {
+    QUnit.test('has an initialize() function that throws an exception if ArithmeticModule is missing', assert => {
         let expectedMatcher = err => err === App.ERRORS.Arithmetic_MODULE_MISSING;
 
         function functionBlock() {
@@ -61,7 +61,7 @@
         assert.throws(functionBlock, expectedMatcher);
     });
 
-    QUnit.test('App.initialize() throws exception if OutputModule is missing', assert => {
+    QUnit.test('has an initialize() function that throws an exception if OutputModule is missing', assert => {
         let expectedMatcher = err => err === App.ERRORS.OUTPUT_MODULE_MISSING
 
         function functionBlock() {
@@ -76,25 +76,20 @@
         assert.throws(functionBlock, expectedMatcher);
     });
 
-    QUnit.test('App.initialize saves the modules in a variable', assert => {
+    QUnit.test('has initialize() function that saves the modules in a variable', assert => {
         let mockModules = {
             InputModule: {}, //  Mock module
             ArithmeticModule: {}, //  Mock module
             OutputModule: {} // Mock module 
         };
 
-        assert.equal(App.MODULES, null);
-
         App.initialize(mockModules);
-
         assert.deepEqual(mockModules, App.MODULES);
     });
 
-    QUnit.test('When App.updateInput() is called, InputModule.setInput() is also invoked and input is passed', assert => {
-        App.MODULES = {}; // MOCK
-        App.MODULES.InputModule = {
-            setInput: function (input) { /* MOCK */ }
-        };
+    QUnit.test('has an updateInput() function that invokes InputModule.setInput() and input is passed', assert => {
+        App.MODULES = createMockAppModules(); 
+
         let spy = sinon.spy(App.MODULES.InputModule, 'setInput');
 
         let mockInput = 'random input string';
@@ -105,5 +100,51 @@
     });
 
 
-    // TODO: Throw exception if a function of App is used without performing App.initialize yet.
+    QUnit.test('has a process() function that invokes some funcions from InputModule and ArithmeticModule', assert => {
+        let leftOperand = 0;
+        let operator = '+';
+        let rightOperand = 0;
+
+        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand); 
+
+        let loSpy = sinon.spy(App.MODULES.InputModule, 'getLeftOperand');
+        let oSpy = sinon.spy(App.MODULES.InputModule, 'getOperator');
+        let roSpy = sinon.spy(App.MODULES.InputModule, 'getRightOperand');
+        let amSpy = sinon.spy(App.MODULES.ArithmeticModule, 'calculate');
+
+        App.process(leftOperand, operator, rightOperand);
+
+        assert.equal(loSpy.callCount, 1);
+        assert.equal(oSpy.callCount, 1);
+        assert.equal(roSpy.callCount, 1);
+        assert.equal(amSpy.callCount, 1);
+        assert.equal(amSpy.calledWith(leftOperand, operator, rightOperand), true);
+    });
+
+    function createMockAppModules(lo, o, ro) {
+        let modules = {};
+        modules.InputModule = createMockInputModule(lo, o, ro);
+        modules.ArithmeticModule = createMockArithmeticModule();
+
+        return modules;
+    }
+
+    function createMockInputModule(lo, o, ro) {
+        let mockInputModule = {};
+        mockInputModule.setInput = input => { };
+        mockInputModule.getLeftOperand = () => { return lo };
+        mockInputModule.getOperator = () => { return o; };
+        mockInputModule.getRightOperand = () => { return ro; };
+
+        return mockInputModule;
+    }
+
+    function createMockArithmeticModule() {
+        let mockArithmeticModule = {};
+        mockArithmeticModule.calculate = (lo, o, ro) => { };
+
+        return mockArithmeticModule;
+    }
+
+    // @TODO: Throw exception if a function of App is used without performing App.initialize yet.
 })();
