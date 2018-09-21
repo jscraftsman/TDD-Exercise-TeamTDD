@@ -38,19 +38,27 @@
 
     QUnit.test('View.initialize() stores the instance of App in a variable', assert => {
         let mockAppInstance = {};
-        assert.equal(View.APP_INSTANCE, null);
 
         View.initialize(mockAppInstance);
-
         assert.deepEqual(mockAppInstance, View.APP_INSTANCE);
     });
 
-    QUnit.todo('When View.inputChangeHandler() is called, input is passed to App.setInput()', assert => {
-        let spy = sinon.spy(App, 'updateInput');
+    QUnit.test('When View.inputChangeHandler() is called, input is passed to App.updateInput()', assert => {
+        let mockApp = {};
+        mockApp.updateInput = function () {};
 
-        View.inputChangeHandler();
+        let mockEvent = {};
+        mockEvent.target = {};
+        mockEvent.target.value = 'random string';
+        let mockInput = mockEvent.target.value;
+
+        let spy = sinon.spy(mockApp, 'updateInput');
+
+        View.initialize(mockApp);
+        View.inputChangeHandler(mockEvent);
+
         assert.equal(spy.callCount, 1);
+        assert.equal(spy.calledWith(mockInput), true);
     });
-
 
 })();

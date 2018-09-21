@@ -17,6 +17,7 @@
 
         inputChangeHandler: function (e) {
             // Use e.target.value to obtain the data
+            View.APP_INSTANCE.updateInput(e.target.value);
         }
 
     };
