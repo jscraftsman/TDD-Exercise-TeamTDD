@@ -15,6 +15,7 @@
 
     QUnit.test('has a list of static error messages', assert => {
         assert.equal(View.ERRORS.INVALID_INITIALIZATION, 'Invalid initialziation of View! App instance must be passed as an argument.');
+        assert.equal(View.ERRORS.INVALID_INPUT, 'Invalid input!');
     });
 
     QUnit.test('has an initialize() function that throws an exception if it has an empty argument', assert => {
@@ -69,10 +70,72 @@
         assert.equal(spy.callCount, 1);
     });
 
+    QUnit.test('has an inputChangeHandler() function that invokes updateView()', assert => {
+        let mockEvent = createMockEvent();
+        let mockApp = createAppMock();
+
+        let spy = sinon.spy(View, 'updateView');
+
+        View.initialize(mockApp);
+        View.inputChangeHandler(mockEvent);
+
+        assert.equal(spy.callCount, 1);
+    });
+
+    QUnit.test('has an updateView() function that invokes updateError() function if input is invalid', assert => {
+        let spy = sinon.spy(View, 'updateError');
+
+        View.updateView();
+
+        assert.equal(spy.callCount, 1);
+    });
+
+    QUnit.test('has an updateError() function that invokes App.getOutput() and shows the error message', assert => {
+        assertError({
+            INVALID_INPUT: true,
+            MESSAGE: View.ERRORS.INVALID_INPUT
+        }, assert);
+    });
+
+    QUnit.test('has an updateError() function that invokes App.getOutput() and hides the error message', assert => {
+        assertError({
+            INVALID_INPUT: false,
+            MESSAGE: '' 
+        }, assert);
+    });
+
+    QUnit.todo('has an updateView() function that displays 0 as the result', assert => {
+
+    });
+    
+    QUnit.todo('has an updateView() function that displays a one digit result', assert => {
+
+    });
+    
+    QUnit.todo('has an updateView() function that displays a two digit result', assert => {
+
+    });
+
+    QUnit.todo('has an updateView() function that displays a three digit result', assert => {
+
+    });
+
+    QUnit.todo('has an updateView() function that displays the left operand', assert => {
+
+    });
+
+    QUnit.todo('has an updateView() function that displays the right operand', assert => {
+
+    });
+
+    QUnit.todo('has an updateView() function that displays the operator', assert => {
+
+    })
+
     function createMockEvent() {
         let mockEvent = {};
         mockEvent.target = {};
-        mockEvent.target.value = 'random string';
+        mockEvent.target.value = 'RANDOM EVENT';
 
         return mockEvent;
     }
@@ -81,8 +144,32 @@
         let mockApp = {};
         mockApp.updateInput = function () {};
         mockApp.process = function () {};
+        mockApp.getOutput = function () {};
 
         return mockApp;
+    }
+
+    function assertError(error, assert) {
+        let mockApp = createAppMock();
+        let stub = sinon.stub(mockApp, 'getOutput');
+        stub.returns({INVALID_INPUT: error.INVALID_INPUT});
+
+        View.initialize(mockApp);
+
+        assert.equal(View.ERROR_MESSAGE, '');
+
+        View.ERROR_MESSAGE = 'RANDOM STRING';
+        View.updateError();
+
+        assert.equal(stub.callCount, 1);
+        assert.equal(View.ERROR_MESSAGE, error.MESSAGE);
+
+        evaluateErrorUIDOM(error.MESSAGE, assert);
+    }
+
+    function evaluateErrorUIDOM(errorMessage, assert) {
+        let errorDOM = document.querySelector('span#error');
+        assert.equal(errorDOM.textContent, errorMessage);
     }
 
 })();

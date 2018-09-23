@@ -100,7 +100,7 @@
     });
 
 
-    QUnit.test('has a process() function that invokes some funcions from InputModule and ArithmeticModule', assert => {
+    QUnit.test('has a process() function that invokes some functions from InputModule and ArithmeticModule', assert => {
         let leftOperand = 0;
         let operator = '+';
         let rightOperand = 0;
@@ -119,6 +119,32 @@
         assert.equal(roSpy.callCount, 1);
         assert.equal(amSpy.callCount, 1);
         assert.equal(amSpy.calledWith(leftOperand, operator, rightOperand), true);
+    });
+
+    QUnit.todo('has a getOutput() function that returns an INVALID_INPUT', assert => {
+        // Returns:
+        /* 
+        {
+            INVALID_INPUT: true | false,
+            RESULT: {
+                LEFT_RESULT: null | 0 - 9,
+                MIDDLE_RESULT: null | 0 - 9,
+                RIGHT_RESULT: null | 0 - 9,
+            }
+        }
+        */
+    });
+
+    QUnit.todo('has a getOutput() function that returns a one digit RESULT object', assert => {
+
+    });
+
+    QUnit.todo('has a getOutput() function that returns a two digit RESULT object', assert => {
+
+    });
+
+    QUnit.todo('has a getOutput() function that returns a three digit RESULT object', assert => {
+
     });
 
     function createMockAppModules(lo, o, ro) {
