@@ -29,6 +29,7 @@
                 let operator = App.MODULES.InputModule.getOperator();
                 let rightOperand = App.MODULES.InputModule.getRightOperand();
                 let result = App.MODULES.ArithmeticModule.calculate(leftOperand, operator, rightOperand);
+
                 App.MODULES.OutputModule.setResult(result);
             }
         },
