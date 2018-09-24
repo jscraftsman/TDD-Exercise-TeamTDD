@@ -3,6 +3,8 @@
 (() => {
     'use strict';
 
+    const KEYCODE_ENTER = 13;
+
     QUnit.module('View');
 
     QUnit.test('has a View instance', assert => {
@@ -11,6 +13,10 @@
 
     QUnit.test('has an initialize() function', assert => {
         assert.notEqual(View.initialize, undefined);
+    });
+
+    QUnit.test('has a TRIGGER_KEYCODE constant', assert => {
+        assert.equal(View.TRIGGER_KEYCODE, KEYCODE_ENTER);
     });
 
     QUnit.test('has a list of static error messages', assert => {
@@ -29,12 +35,12 @@
         assert.throws(functionBlock, expectedMatcher);
     });
 
-    QUnit.test('has an initialize() function that adds an DOM onChange event listener', assert => {
+    QUnit.test('has an initialize() function that adds an DOM onKeyUp event listener', assert => {
         View.initialize(App);
 
         let inputDOM = document.querySelector('#input');
-        assert.notEqual(inputDOM.oninput, null);
-        assert.deepEqual(inputDOM.oninput, View.inputChangeHandler);
+        assert.notEqual(inputDOM.onkeyup, null);
+        assert.deepEqual(inputDOM.onkeyup, View.inputChangeHandler);
     });
 
     QUnit.test('has an initialize() function that stores the instance of App into a variable', assert => {
@@ -44,10 +50,21 @@
         assert.deepEqual(mockAppInstance, View.APP_INSTANCE);
     });
 
-    QUnit.test('has an inputChangeHandler() function that invokes App.updateInput() and passes the input data', assert => {
-        let mockEvent = createMockEvent();
+    QUnit.test('has a getUserInput() function that obtains the value of the of input field', assert => {
+        let mockInput = 'mock input';
+        createMockInput(mockInput);
+        
+        let userInput = View.getUserInput();
+
+        assert.equal(userInput, mockInput);
+    });
+
+    QUnit.test('has an inputChangeHandler() function that invokes App.updateInput() passes the input data if "Enter" key is pressed', assert => {
+        let mockInput = 'mock input';
+        let mockEvent = createMockKeyEvent(KEYCODE_ENTER);
         let mockApp = createAppMock();
-        let mockInput = mockEvent.target.value;
+
+        createMockInput(mockInput);
 
         let spy = sinon.spy(mockApp, 'updateInput');
 
@@ -58,8 +75,8 @@
         assert.equal(spy.calledWith(mockInput), true);
     });
 
-    QUnit.test('has an inputChangeHandler() function that invokes App.process()', assert => {
-        let mockEvent = createMockEvent();
+    QUnit.test('has an inputChangeHandler() function that invokes App.process() if "Enter" key is pressed', assert => {
+        let mockEvent = createMockKeyEvent(KEYCODE_ENTER);
         let mockApp = createAppMock();
 
         let spy = sinon.spy(mockApp, 'process');
@@ -70,8 +87,8 @@
         assert.equal(spy.callCount, 1);
     });
 
-    QUnit.test('has an inputChangeHandler() function that invokes updateView()', assert => {
-        let mockEvent = createMockEvent();
+    QUnit.test('has an inputChangeHandler() function that invokes updateView() if "Enter" key is pressed', assert => {
+        let mockEvent = createMockKeyEvent(KEYCODE_ENTER);
         let mockApp = createAppMock();
 
         let spy = sinon.spy(View, 'updateView');
@@ -80,6 +97,40 @@
         View.inputChangeHandler(mockEvent);
 
         assert.equal(spy.callCount, 1);
+
+        spy.restore();
+    });
+
+    QUnit.test('has an inputChangeHandler() function that does not invoke the necessary functions if "Enter" key is not pressed', assert => {
+        let randomKeyCode = KEYCODE_ENTER + 128;
+        let mockEvent = createMockKeyEvent(randomKeyCode);
+        let mockApp = createAppMock();
+        
+        let appUpdateInputSpy = sinon.spy(mockApp, 'updateInput');
+        let appProcesSpy = sinon.spy(mockApp, 'process');
+        let viewUpdateViewSpy = sinon.spy(View, 'updateView');
+
+        View.initialize(mockApp);
+        View.inputChangeHandler(mockEvent);
+
+        assert.equal(appUpdateInputSpy.callCount, 0);
+        assert.equal(appProcesSpy.callCount, 0);
+        assert.equal(viewUpdateViewSpy.callCount, 0);
+    });
+
+    QUnit.test('has an inputChangeHandler() function that clears the input if "Enter" key is pressed', assert => {
+        let mockInput = 'mock input';
+        let mockEvent = createMockKeyEvent(KEYCODE_ENTER);
+        let mockApp = createAppMock();
+        createMockInput(mockInput);
+
+        View.initialize(mockApp);
+
+        assert.equal(View.getUserInput(), mockInput);
+
+        View.inputChangeHandler(mockEvent);
+
+        assert.equal(View.getUserInput(), '');
     });
 
     QUnit.test('has an updateView() function that invokes updateError() function if input is invalid', assert => {
@@ -126,10 +177,9 @@
 
     // @TODO: Unit test for all output values
 
-    function createMockEvent() {
+    function createMockKeyEvent(keyCode) {
         let mockEvent = {};
-        mockEvent.target = {};
-        mockEvent.target.value = 'RANDOM EVENT';
+        mockEvent.keyCode = keyCode;
 
         return mockEvent;
     }
@@ -141,6 +191,11 @@
         mockApp.getOutput = function () {};
 
         return mockApp;
+    }
+
+    function createMockInput(mockInput) {
+        let inputDOM = document.querySelector('input#input');
+        inputDOM.value = mockInput;
     }
 
     function assertError(error, assert) {

@@ -10,6 +10,8 @@
         },
 
         ERROR_MESSAGE: '',
+
+        TRIGGER_KEYCODE: 13,
         
         APP_INSTANCE: null,
 
@@ -22,11 +24,21 @@
         },
 
         inputChangeHandler: function (e) {
-            View.APP_INSTANCE.updateInput(e.target.value);
-            View.APP_INSTANCE.process();
+            console.log('event', e);
 
-            View.updateView();
+            if(e && e.keyCode === View.TRIGGER_KEYCODE) {
+                let input = View.getUserInput();
+                View.APP_INSTANCE.updateInput(input);
+                View.APP_INSTANCE.process();
+
+                View.updateView();
+                clearInput();
+            }
         }, 
+
+        getUserInput: function() {
+            return returnInputValue();
+        },
 
         updateView() {
             View.updateError();
@@ -46,10 +58,19 @@
     };
 
     /* Private functions */
-
     function addInputChangeEventListener() {
         let inputDOM = document.querySelector('input#input');
-        inputDOM.oninput = View.inputChangeHandler;
+        inputDOM.onkeyup = View.inputChangeHandler;
+    }
+
+    function returnInputValue() {
+        let inputDOM = document.querySelector('input#input');
+        return inputDOM.value;
+    }
+
+    function clearInput() {
+        let inputDOM = document.querySelector('input#input');
+        inputDOM.value = '';
     }
 
     function displayError() {
