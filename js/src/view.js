@@ -71,10 +71,12 @@
             if(output && output.RESULT) {
                 let lDigit = output.RESULT.LEFT_DIGIT ? output.RESULT.LEFT_DIGIT : View.DEFAULT_DISPLAY_IMG;
                 let rDigit = output.RESULT.RIGHT_DIGIT ? output.RESULT.RIGHT_DIGIT : View.DEFAULT_DISPLAY_IMG;
-                
+
                 View.LEFT_DIGIT_IMG = View.createImgPath(lDigit);
                 View.RIGHT_DIGIT_IMG = View.createImgPath(rDigit);
             }
+
+            updateImageSource();
         },
 
         createImgPath: function(imageName) {
@@ -102,6 +104,13 @@
     function displayError() {
         let errorDOM = document.querySelector('span#error');
         errorDOM.textContent = View.ERROR_MESSAGE;
+    }
+
+    function updateImageSource() {
+        let leftImgDOM = document.querySelector('img#left-digit');
+        let rightImgDOM = document.querySelector('img#right-digit');
+        leftImgDOM.src = View.LEFT_DIGIT_IMG;
+        rightImgDOM.src = View.RIGHT_DIGIT_IMG;
     }
 
     window.View = View;

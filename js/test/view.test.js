@@ -238,8 +238,29 @@
         assertDisplayDigits(mock, expected, assert);
     });
 
-    QUnit.todo('has an updateResult() function that updates the image sources of display digits', assert => {
-        
+    QUnit.test('has an updateResult() function that updates the image source of display digits', assert => {
+        let mockApp = createAppMock();
+        let stub = sinon.stub(mockApp, 'getOutput');
+        let leftDigit = DISPLAY_MAP.NEGATIVE;
+        let rightDigit = DISPLAY_MAP.ZERO;
+        stub.returns({
+            INVALID_INPUT: false,
+            RESULT: {
+                LEFT_DIGIT: leftDigit,
+                RIGHT_DIGIT: rightDigit 
+            } 
+        });
+
+        View.initialize(mockApp);
+
+        View.LEFT_DIGIT_IMG = 'RANDOM STRING';
+        View.RIGHT_DIGIT_IMG = 'RANDOM STRING';
+
+        View.updateResult();
+
+        evaluateDisplayDigitImageSource('left', View.createImgPath(leftDigit), assert);
+        evaluateDisplayDigitImageSource('right', View.createImgPath(rightDigit), assert);
+        stub.restore();
     });
 
     function createMockKeyEvent(keyCode) {
@@ -310,6 +331,12 @@
     function evaluateErrorUIDOM(errorMessage, assert) {
         let errorDOM = document.querySelector('span#error');
         assert.equal(errorDOM.textContent, errorMessage);
+    }
+
+    function evaluateDisplayDigitImageSource(place, expectedPath, assert) {
+        let imgDOM = document.querySelector(`img#${place}-digit`);
+        let containsString = imgDOM.src.indexOf(expectedPath) !== -1;
+        assert.equal(containsString, true);
     }
 
 })();
