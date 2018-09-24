@@ -3,6 +3,11 @@
 (() => {
     'use strict';
 
+    const DISPLAY_MAP = {
+        ONE: 'bc',
+        TWO: 'abdeg'
+    };
+
     QUnit.module('App');
 
     QUnit.test('has an App instance', assert => {
@@ -97,10 +102,50 @@
 
         assert.equal(spy.callCount, 1);
         assert.equal(spy.calledWith(mockInput), true);
+
+        spy.restore();
     });
 
-
+    // @TODO: Refactor. DRY
     QUnit.test('has a process() function that invokes some functions from InputModule and ArithmeticModule', assert => {
+        let leftOperand = 0;
+        let operator = '+';
+        let rightOperand = 0;
+        let mockResult = 0;
+
+        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand); 
+
+        let loSpy = sinon.spy(App.MODULES.InputModule, 'getLeftOperand');
+        let oSpy = sinon.spy(App.MODULES.InputModule, 'getOperator');
+        let roSpy = sinon.spy(App.MODULES.InputModule, 'getRightOperand');
+        let omSpy = sinon.spy(App.MODULES.OutputModule, 'setResult');
+
+        let isValidStub = sinon.stub(App.MODULES.InputModule, 'isValid');
+        let calculateStub = sinon.stub(App.MODULES.ArithmeticModule, 'calculate');
+
+        isValidStub.returns(true);
+        calculateStub.returns(mockResult);
+
+        App.process();
+
+        assert.equal(loSpy.callCount, 1);
+        assert.equal(oSpy.callCount, 1);
+        assert.equal(roSpy.callCount, 1);
+        assert.equal(calculateStub.callCount, 1);
+        assert.equal(calculateStub.calledWith(leftOperand, operator, rightOperand), true);
+        assert.equal(omSpy.callCount, 1);
+        assert.equal(omSpy.calledWith(mockResult), true);
+
+        loSpy.restore();
+        oSpy.restore();
+        roSpy.restore();
+        omSpy.restore();
+        isValidStub.restore();
+        calculateStub.restore();
+    });
+
+    // @TODO: Refactor. DRY
+    QUnit.test('has a process() function that does not invoke necessary functions if input is invalid', assert => {
         let leftOperand = 0;
         let operator = '+';
         let rightOperand = 0;
@@ -111,46 +156,94 @@
         let oSpy = sinon.spy(App.MODULES.InputModule, 'getOperator');
         let roSpy = sinon.spy(App.MODULES.InputModule, 'getRightOperand');
         let amSpy = sinon.spy(App.MODULES.ArithmeticModule, 'calculate');
+        let omSpy = sinon.spy(App.MODULES.OutputModule, 'setResult');
 
-        App.process(leftOperand, operator, rightOperand);
+        let isValidStub = sinon.stub(App.MODULES.InputModule, 'isValid');
+        isValidStub.returns(false);
 
-        assert.equal(loSpy.callCount, 1);
-        assert.equal(oSpy.callCount, 1);
-        assert.equal(roSpy.callCount, 1);
-        assert.equal(amSpy.callCount, 1);
-        assert.equal(amSpy.calledWith(leftOperand, operator, rightOperand), true);
+        App.process();
+
+        assert.equal(loSpy.callCount, 0);
+        assert.equal(oSpy.callCount, 0);
+        assert.equal(roSpy.callCount, 0);
+        assert.equal(amSpy.callCount, 0);
+        assert.equal(omSpy.callCount, 0);
+
+        loSpy.restore();
+        oSpy.restore();
+        roSpy.restore();
+        amSpy.restore();
+        omSpy.restore();
+        isValidStub.restore();
     });
 
-    QUnit.todo('has a getOutput() function that returns an INVALID_INPUT', assert => {
-        // Returns:
-        /* 
-        {
-            INVALID_INPUT: true | false,
-            RESULT: {
-                LEFT_RESULT: null | 0 - 9,
-                MIDDLE_RESULT: null | 0 - 9,
-                RIGHT_RESULT: null | 0 - 9,
-            }
-        }
-        */
+    // @TODO: Refactor. DRY
+    QUnit.test('has a getOutput() function that returns true for INVALID_INPUT if input is invalid', assert => {
+        let leftOperand = 0;
+        let operator = '+';
+        let rightOperand = 0;
+
+        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand); 
+
+        let stub = sinon.stub(App.MODULES.InputModule, 'isValid');
+        stub.returns(false);
+
+        let output = App.getOutput();
+
+        assert.equal(output.INVALID_INPUT, true);
+
+        stub.restore();
     });
 
-    QUnit.todo('has a getOutput() function that returns a one digit RESULT object', assert => {
+    // @TODO: Refactor. DRY
+    QUnit.test('has a getOutput() function that returns false for INVALID_INPUT if input is invalid', assert => {
+        let leftOperand = 0;
+        let operator = '+';
+        let rightOperand = 0;
 
+        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand); 
+
+        let stub = sinon.stub(App.MODULES.InputModule, 'isValid');
+        stub.returns(true);
+
+        let output = App.getOutput();
+
+        assert.equal(output.INVALID_INPUT, false);
+
+        stub.restore();
     });
 
-    QUnit.todo('has a getOutput() function that returns a two digit RESULT object', assert => {
+    // @TODO: Refactor. DRY
+    QUnit.test('has a getOutput() function that returns the results from OutputModule', assert => {
+        let leftDigitMock = DISPLAY_MAP.ONE;
+        let rightDigitMock = DISPLAY_MAP.TWO;
 
-    });
+        App.MODULES = createMockAppModules(); 
 
-    QUnit.todo('has a getOutput() function that returns a three digit RESULT object', assert => {
+        let imStub = sinon.stub(App.MODULES.InputModule, 'isValid');
+        let ldStub = sinon.stub(App.MODULES.OutputModule, 'getLeftDigit');
+        let rdStub = sinon.stub(App.MODULES.OutputModule, 'getRightDigit');
 
+        imStub.returns(true);
+        ldStub.returns(leftDigitMock);
+        rdStub.returns(rightDigitMock);
+        
+        let output = App.getOutput();
+
+        assert.equal(ldStub.callCount, 1);
+        assert.equal(output.RESULT.LEFT_DIGIT, leftDigitMock);
+        assert.equal(output.RESULT.RIGHT_DIGIT, rightDigitMock);
+
+        imStub.restore();
+        ldStub.restore();
+        rdStub.restore();
     });
 
     function createMockAppModules(lo, o, ro) {
         let modules = {};
         modules.InputModule = createMockInputModule(lo, o, ro);
         modules.ArithmeticModule = createMockArithmeticModule();
+        modules.OutputModule = createMockOutputModule();
 
         return modules;
     }
@@ -161,15 +254,25 @@
         mockInputModule.getLeftOperand = () => { return lo };
         mockInputModule.getOperator = () => { return o; };
         mockInputModule.getRightOperand = () => { return ro; };
+        mockInputModule.isValid = () => { };
 
         return mockInputModule;
     }
 
     function createMockArithmeticModule() {
         let mockArithmeticModule = {};
-        mockArithmeticModule.calculate = (lo, o, ro) => { };
+        mockArithmeticModule.calculate = (lo, o, ro) => { return 0;};
 
         return mockArithmeticModule;
+    }
+
+    function createMockOutputModule() {
+        let mockOutputModule = {};
+        mockOutputModule.setResult = (result) => { };
+        mockOutputModule.getLeftDigit = () => { return 'MOCK'; };
+        mockOutputModule.getRightDigit = () => { return 'MOCK'; };
+
+        return mockOutputModule;
     }
 
     // @TODO: Throw exception if a function of App is used without performing App.initialize yet.

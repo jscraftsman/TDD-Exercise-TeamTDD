@@ -23,11 +23,26 @@
         },
 
         process: function() {
-            // @TODO: Should check if Input is valid and show error accordingly
-            let leftOperand = App.MODULES.InputModule.getLeftOperand();
-            let operator = App.MODULES.InputModule.getOperator();
-            let rightOperand = App.MODULES.InputModule.getRightOperand();
-            App.MODULES.ArithmeticModule.calculate(leftOperand, operator, rightOperand);
+            let isValid = App.MODULES.InputModule.isValid();
+            if(isValid) {
+                let leftOperand = App.MODULES.InputModule.getLeftOperand();
+                let operator = App.MODULES.InputModule.getOperator();
+                let rightOperand = App.MODULES.InputModule.getRightOperand();
+                let result = App.MODULES.ArithmeticModule.calculate(leftOperand, operator, rightOperand);
+                App.MODULES.OutputModule.setResult(result);
+            }
+        },
+
+        getOutput: function() {
+            let isValid = App.MODULES.InputModule.isValid();
+            let output = {};
+
+            output.INVALID_INPUT = isValid ? false : true;
+            output.RESULT = {};
+            output.RESULT.LEFT_DIGIT = App.MODULES.OutputModule.getLeftDigit();
+            output.RESULT.RIGHT_DIGIT = App.MODULES.OutputModule.getRightDigit();
+
+            return output;
         }
     };
 
