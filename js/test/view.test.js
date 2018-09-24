@@ -100,31 +100,23 @@
     QUnit.test('has an updateError() function that invokes App.getOutput() and hides the error message', assert => {
         assertError({
             INVALID_INPUT: false,
-            MESSAGE: '' 
+            MESSAGE: ''
         }, assert);
     });
 
     QUnit.todo('has an updateView() function that displays 0 as the result', assert => {
 
     });
-    
+
     QUnit.todo('has an updateView() function that displays a one digit result', assert => {
 
     });
-    
+
     QUnit.todo('has an updateView() function that displays a two digit result', assert => {
 
     });
 
-    QUnit.todo('has an updateView() function that displays a three digit result', assert => {
-
-    });
-
     QUnit.todo('has an updateView() function that displays the left operand', assert => {
-
-    });
-
-    QUnit.todo('has an updateView() function that displays the right operand', assert => {
 
     });
 
@@ -152,7 +144,9 @@
     function assertError(error, assert) {
         let mockApp = createAppMock();
         let stub = sinon.stub(mockApp, 'getOutput');
-        stub.returns({INVALID_INPUT: error.INVALID_INPUT});
+        stub.returns({
+            INVALID_INPUT: error.INVALID_INPUT
+        });
 
         View.initialize(mockApp);
 
