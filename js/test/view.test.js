@@ -4,6 +4,10 @@
     'use strict';
 
     const KEYCODE_ENTER = 13;
+    const DISPLAY_MAP = {
+        NEGATIVE: 'g',
+        ZERO: 'abcdef'
+    };
 
     QUnit.module('View');
 
@@ -15,8 +19,11 @@
         assert.notEqual(View.initialize, undefined);
     });
 
-    QUnit.test('has a TRIGGER_KEYCODE constant', assert => {
+    QUnit.test('has a list of static variables', assert => {
         assert.equal(View.TRIGGER_KEYCODE, KEYCODE_ENTER);
+        assert.equal(View.BASE_IMG_PATH, 'img/');
+        assert.equal(View.DEFAULT_DISPLAY_IMG, 'empty');
+        assert.equal(View.IMG_EXTENSION, '.png');
     });
 
     QUnit.test('has a list of static error messages', assert => {
@@ -48,6 +55,23 @@
 
         View.initialize(mockAppInstance);
         assert.deepEqual(mockAppInstance, View.APP_INSTANCE);
+    });
+
+    QUnit.test('has an initialize() function that sets the initial display', assert => {
+        let mockAppInstance = {};
+
+        View.initialize(mockAppInstance);
+        assert.equal(View.LEFT_DIGIT_IMG, View.createImgPath(View.DEFAULT_DISPLAY_IMG));
+        assert.equal(View.RIGHT_DIGIT_IMG, View.createImgPath(View.DEFAULT_DISPLAY_IMG));
+    });
+
+    QUnit.test('has a createImgPath() function that returns a parsed path of display', assert => {
+        let path = View.createImgPath(View.DEFAULT_DISPLAY_IMG);
+        assert.equal(path, `${View.BASE_IMG_PATH}${View.DEFAULT_DISPLAY_IMG}${View.IMG_EXTENSION}`);
+
+        let randomImageName = 'RANDOM';
+        path = View.createImgPath(randomImageName);
+        assert.equal(path, `${View.BASE_IMG_PATH}${randomImageName}${View.IMG_EXTENSION}`);
     });
 
     QUnit.test('has a getUserInput() function that obtains the value of the of input field', assert => {
@@ -139,6 +163,7 @@
         View.updateView();
 
         assert.equal(spy.callCount, 1);
+        spy.restore();
     });
 
     QUnit.test('has an updateError() function that invokes App.getOutput() and shows the error message', assert => {
@@ -155,27 +180,67 @@
         }, assert);
     });
 
-    QUnit.todo('has an updateView() function that displays 0 as the result', assert => {
+    QUnit.test('has an updateView() function that invokes updateResult() function', assert => {
+        let mockApp = createAppMock();
+        let spy = sinon.spy(View, 'updateResult');
 
+        View.initialize(mockApp);
+        View.updateView();
+
+        assert.equal(spy.callCount, 1);
+        spy.restore();
     });
 
-    QUnit.todo('has an updateView() function that displays a one digit result', assert => {
+    QUnit.test('has an updateResult() function that sets the display results to default if input is invalid', assert => {
+        let mock = { INVALID_INPUT: true, };
 
+        let expected = {
+            LEFT_DIGIT: View.DEFAULT_DISPLAY_IMG,
+            RIGHT_DIGIT: View.DEFAULT_DISPLAY_IMG
+        };
+
+        assertDisplayDigits(mock, expected, assert);
     });
 
-    QUnit.todo('has an updateView() function that displays a two digit result', assert => {
+    QUnit.test('has an updateResult() function that sets the display results to default if left or right digit is an empty string', assert => {
+        let mockValidInput = { 
+            INVALID_INPUT: true, 
+            LEFT_DIGIT: '', 
+            RIGHT_DIGIT: ''
+        };
+        let mockInvalidInput = { 
+            INVALID_INPUT: false, 
+            LEFT_DIGIT: '', 
+            RIGHT_DIGIT: ''
+        };
 
+        let expected = {
+            LEFT_DIGIT: View.DEFAULT_DISPLAY_IMG,
+            RIGHT_DIGIT: View.DEFAULT_DISPLAY_IMG
+        };
+
+        assertDisplayDigits(mockValidInput, expected, assert);
+        assertDisplayDigits(mockInvalidInput, expected, assert);
     });
 
-    QUnit.todo('has an updateView() function that displays the left operand', assert => {
+    QUnit.test('has an updateResult() function that sets the displays results based from the data from App.getOutput().RESULT', assert => {
+        let mock = { 
+            INVALID_INPUT: false, 
+            LEFT_DIGIT: DISPLAY_MAP.NEGATIVE, 
+            RIGHT_DIGIT: DISPLAY_MAP.ZERO
+        };
 
+        let expected = {
+            LEFT_DIGIT: DISPLAY_MAP.NEGATIVE,
+            RIGHT_DIGIT: DISPLAY_MAP.ZERO
+        };
+
+        assertDisplayDigits(mock, expected, assert);
     });
 
-    QUnit.todo('has an updateView() function that displays the operator', assert => {
-
+    QUnit.todo('has an updateResult() function that updates the image sources of display digits', assert => {
+        
     });
-
-    // @TODO: Unit test for all output values
 
     function createMockKeyEvent(keyCode) {
         let mockEvent = {};
@@ -216,6 +281,30 @@
         assert.equal(View.ERROR_MESSAGE, error.MESSAGE);
 
         evaluateErrorUIDOM(error.MESSAGE, assert);
+        stub.restore();
+    }
+
+    function assertDisplayDigits(mock, expected, assert) {
+        let mockApp = createAppMock();
+        let stub = sinon.stub(mockApp, 'getOutput');
+        stub.returns({
+            INVALID_INPUT: mock.INVALID_INPUT,
+            RESULT: {
+                LEFT_DIGIT: mock.LEFT_DIGIT,
+                RIGHT_DIGIT: mock.RIGHT_DIGIT
+            } 
+        });
+
+        View.initialize(mockApp);
+
+        View.LEFT_DIGIT_IMG = 'RANDOM STRING';
+        View.RIGHT_DIGIT_IMG = 'RANDOM STRING';
+        View.updateResult();
+
+        assert.equal(View.LEFT_DIGIT_IMG, View.createImgPath(expected.LEFT_DIGIT));
+        assert.equal(View.RIGHT_DIGIT_IMG, View.createImgPath(expected.RIGHT_DIGIT));
+
+        stub.restore();
     }
 
     function evaluateErrorUIDOM(errorMessage, assert) {

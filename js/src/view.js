@@ -12,6 +12,13 @@
         ERROR_MESSAGE: '',
 
         TRIGGER_KEYCODE: 13,
+
+        BASE_IMG_PATH: 'img/',
+        DEFAULT_DISPLAY_IMG: 'empty',
+        IMG_EXTENSION: '.png',
+
+        LEFT_DIGIT_IMG: '',
+        RIGHT_DIGIT_IMG: '',
         
         APP_INSTANCE: null,
 
@@ -21,11 +28,11 @@
             addInputChangeEventListener();
 
             View.ERROR_MESSAGE = '';
+            View.LEFT_DIGIT_IMG = View.createImgPath(View.DEFAULT_DISPLAY_IMG);
+            View.RIGHT_DIGIT_IMG = View.createImgPath(View.DEFAULT_DISPLAY_IMG);
         },
 
         inputChangeHandler: function (e) {
-            console.log('event', e);
-
             if(e && e.keyCode === View.TRIGGER_KEYCODE) {
                 let input = View.getUserInput();
                 View.APP_INSTANCE.updateInput(input);
@@ -40,11 +47,12 @@
             return returnInputValue();
         },
 
-        updateView() {
+        updateView: function() {
             View.updateError();
+            View.updateResult();
         },
 
-        updateError() {
+        updateError: function() {
             let output = View.APP_INSTANCE.getOutput();
             if (output && output.INVALID_INPUT === true) {
                 View.ERROR_MESSAGE = View.ERRORS.INVALID_INPUT;
@@ -53,6 +61,24 @@
             }
 
             displayError();
+        },
+
+        updateResult: function() {
+            View.LEFT_DIGIT_IMG = View.createImgPath(View.DEFAULT_DISPLAY_IMG);
+            View.RIGHT_DIGIT_IMG = View.createImgPath(View.DEFAULT_DISPLAY_IMG);
+
+            let output = View.APP_INSTANCE.getOutput();
+            if(output && output.RESULT) {
+                let lDigit = output.RESULT.LEFT_DIGIT ? output.RESULT.LEFT_DIGIT : View.DEFAULT_DISPLAY_IMG;
+                let rDigit = output.RESULT.RIGHT_DIGIT ? output.RESULT.RIGHT_DIGIT : View.DEFAULT_DISPLAY_IMG;
+                
+                View.LEFT_DIGIT_IMG = View.createImgPath(lDigit);
+                View.RIGHT_DIGIT_IMG = View.createImgPath(rDigit);
+            }
+        },
+
+        createImgPath: function(imageName) {
+            return `${View.BASE_IMG_PATH}${imageName}${View.IMG_EXTENSION}`;
         }
 
     };
