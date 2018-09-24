@@ -122,7 +122,9 @@
 
     QUnit.todo('has an updateView() function that displays the operator', assert => {
 
-    })
+    });
+
+    // @TODO: Unit test for all output values
 
     function createMockEvent() {
         let mockEvent = {};
