@@ -6,25 +6,22 @@
     const InputModule = {
         INPUT: '',
 
-        setInput: function(input) {
+        setInput: function (input) {
             InputModule.INPUT = input;
         },
 
-        isValid: function() {
+        isValid: function () {
             let parts = InputModule.INPUT.split(' ');
 
-            if (parts.length < 3) return false;  
+            if (hasIncorrectNumberOfParts(parts)) return false;
 
-            let lo = parseInt(parts[0]);
-            let ro = parseInt(parts[2]);
+            let leftOperand = parts[0];
+            let operation = parts[1];
+            let rightOperand = parts[2];
 
-            if(isNaN(lo) || lo < 0 || lo > 9)  return false;
-            if(isNaN(ro) || ro < 0 || ro > 9) return false;
-
-
-            if(parts[1] !== '+' && parts[1] !== '-' && parts[1] !== 'x' && parts[1] !== '/'){
-                return false;
-            }
+            if (isInvalidDigit(leftOperand)) return false;
+            if (isInvalidDigit(rightOperand)) return false;
+            if (isNotValidOperation(operation)) return false;
 
             return true;
         }
@@ -33,9 +30,47 @@
     };
 
     /* Private functions */
+    function hasIncorrectNumberOfParts(elements) {
+        return elements < 3;
+    }
 
+    function isNotNumber(num) {
+        return Number.isNaN(num);
+    }
+
+    function isNotDecimal(num) {
+        return num % 1 !== 0;
+    }
+
+    function isNotSingleDigit(num) {
+        return (num < 0 || num > 9);
+    }
+
+    function isInvalidDigit(num) {
+        return (isNotNumber(num) || isNotDecimal(num) || isNotSingleDigit(num));
+    }
+
+    function isNotValidOperation(o) {
+        return (isNotAddition(o) && isNotSubtraction(o) && isNotMultiplication(o) && isNotDivision(o));
+    }
+
+    function isNotAddition(o) {
+        return o !== '+';
+    }
+
+    function isNotSubtraction(o) {
+        return o !== '-';
+    }
+
+    function isNotMultiplication(o) {
+        return o !== 'x';
+    }
+
+    function isNotDivision(o) {
+        return o !== '/';
+    }
 
 
     window.InputModule = InputModule;
-    
+
 })();

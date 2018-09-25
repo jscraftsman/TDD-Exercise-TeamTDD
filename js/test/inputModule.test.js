@@ -35,16 +35,20 @@
         assertValidityOfOperation('/', assert);
     });
 
-    QUnit.test('has an isValid() function returns false for "l + r" if l is not valid', assert => {
-        assertInvalidLeftOperand('a', assert);
-        assertInvalidLeftOperand(10, assert);
-        assertInvalidLeftOperand(-1, assert);
+    QUnit.test('has an isValid() function returns false for "l + r" if l or r is not valid', assert => {
+        assertInvalidOperands('+', assert);
     });
 
-    QUnit.test('has an isValid() function returns false for "l + r" if r is not valid', assert => {
-        assertInvalidRightOperand('a', assert);
-        assertInvalidRightOperand(10, assert);
-        assertInvalidRightOperand(-1, assert);
+    QUnit.test('has an isValid() function returns false for "l - r" if l or r is not valid', assert => {
+        assertInvalidOperands('-', assert);
+    });
+
+    QUnit.test('has an isValid() function returns false for "l x r" if l or r is not valid', assert => {
+        assertInvalidOperands('x', assert);
+    });
+
+    QUnit.test('has an isValid() function returns false for "l / r" if l or r is not valid', assert => {
+        assertInvalidOperands('/', assert);
     });
 
     QUnit.todo('has a getLeftOperand() function', assert => {
@@ -54,7 +58,7 @@
     QUnit.todo('has a getRightOperand() function', assert => {
 
     });
-    
+
     QUnit.todo('has a getOperator() function', assert => {
 
     });
@@ -73,20 +77,27 @@
         }
     }
 
-    function assertInvalidLeftOperand(lo, assert) {
-        let mockInput = `${lo} + 0`;
+    function assertInvalidOperands(operator, assert) {
+        let invalidValues = ['a', '10', 10, -1, 1.5];
+
+        for (let invalidValue of invalidValues) {
+            assertInvalidLeftOperand(operator, invalidValue, assert);
+            assertInvalidRightOperand(operator, invalidValue, assert);
+        }
+    }
+
+    function assertInvalidLeftOperand(operator, lo, assert) {
+        let mockInput = `${lo} ${operator} 1`;
         InputModule.setInput(mockInput);
         let isValid = InputModule.isValid();
         assert.equal(isValid, false);
     }
 
-    function assertInvalidRightOperand(ro, assert) {
-        let mockInput = `0 + ${ro}`;
+    function assertInvalidRightOperand(operator, ro, assert) {
+        let mockInput = `1 ${operator} ${ro}`;
         InputModule.setInput(mockInput);
         let isValid = InputModule.isValid();
         assert.equal(isValid, false);
     }
 
 })();
-
-
