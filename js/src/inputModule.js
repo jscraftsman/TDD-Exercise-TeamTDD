@@ -8,30 +8,52 @@
 
         setInput: function (input) {
             InputModule.INPUT = input;
+            parseInput();
         },
 
         isValid: function () {
-            let parts = InputModule.INPUT.split(' ');
-
-            if (hasIncorrectNumberOfParts(parts)) return false;
-
-            let leftOperand = parts[0];
-            let operation = parts[1];
-            let rightOperand = parts[2];
-
-            if (isInvalidDigit(leftOperand)) return false;
-            if (isInvalidDigit(rightOperand)) return false;
-            if (isNotValidOperation(operation)) return false;
+            if (hasIncorrectNumberOfParts()) return false;
+            if (isInvalidDigit(PARTS.leftOperand)) return false;
+            if (isInvalidDigit(PARTS.rightOperand)) return false;
+            if (isNotValidOperation(PARTS.operator)) return false;
 
             return true;
-        }
+        },
 
+        getLeftOperand: function () {
+            return PARTS.leftOperand;
+        },
+
+        getRightOperand: function () {
+            return PARTS.rightOperand;
+        },
+
+        getOperator: function () {
+            return PARTS.operator;
+        }
 
     };
 
+    /* Private variables */
+
+    let PARTS = {
+        leftOperand: '',
+        operator: '',
+        rightOperand: ''
+    };
+
     /* Private functions */
-    function hasIncorrectNumberOfParts(elements) {
-        return elements < 3;
+
+    function parseInput() {
+        let parts = InputModule.INPUT.split(' ');
+
+        PARTS.leftOperand = parts[0] || '';
+        PARTS.operator = parts[1] || '';
+        PARTS.rightOperand = parts[2] || '';
+    }
+
+    function hasIncorrectNumberOfParts() {
+        return InputModule.INPUT.split(' ').length < 3;
     }
 
     function isNotNumber(num) {

@@ -22,9 +22,9 @@
             App.MODULES.InputModule.setInput(input);
         },
 
-        process: function() {
+        process: function () {
             let isValid = App.MODULES.InputModule.isValid();
-            if(isValid) {
+            if (isValid) {
                 let leftOperand = App.MODULES.InputModule.getLeftOperand();
                 let operator = App.MODULES.InputModule.getOperator();
                 let rightOperand = App.MODULES.InputModule.getRightOperand();
@@ -34,7 +34,7 @@
             }
         },
 
-        getOutput: function() {
+        getOutput: function () {
             let isValid = App.MODULES.InputModule.isValid();
             let output = {};
 

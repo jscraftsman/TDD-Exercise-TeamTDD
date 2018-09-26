@@ -93,7 +93,7 @@
     });
 
     QUnit.test('has an updateInput() function that invokes InputModule.setInput() and input is passed', assert => {
-        App.MODULES = createMockAppModules(); 
+        App.MODULES = createMockAppModules();
 
         let spy = sinon.spy(App.MODULES.InputModule, 'setInput');
 
@@ -113,7 +113,7 @@
         let rightOperand = 0;
         let mockResult = 0;
 
-        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand); 
+        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand);
 
         let loSpy = sinon.spy(App.MODULES.InputModule, 'getLeftOperand');
         let oSpy = sinon.spy(App.MODULES.InputModule, 'getOperator');
@@ -150,7 +150,7 @@
         let operator = '+';
         let rightOperand = 0;
 
-        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand); 
+        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand);
 
         let loSpy = sinon.spy(App.MODULES.InputModule, 'getLeftOperand');
         let oSpy = sinon.spy(App.MODULES.InputModule, 'getOperator');
@@ -183,7 +183,7 @@
         let operator = '+';
         let rightOperand = 0;
 
-        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand); 
+        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand);
 
         let stub = sinon.stub(App.MODULES.InputModule, 'isValid');
         stub.returns(false);
@@ -201,7 +201,7 @@
         let operator = '+';
         let rightOperand = 0;
 
-        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand); 
+        App.MODULES = createMockAppModules(leftOperand, operator, rightOperand);
 
         let stub = sinon.stub(App.MODULES.InputModule, 'isValid');
         stub.returns(true);
@@ -218,7 +218,7 @@
         let leftDigitMock = DISPLAY_MAP.ONE;
         let rightDigitMock = DISPLAY_MAP.TWO;
 
-        App.MODULES = createMockAppModules(); 
+        App.MODULES = createMockAppModules();
 
         let imStub = sinon.stub(App.MODULES.InputModule, 'isValid');
         let ldStub = sinon.stub(App.MODULES.OutputModule, 'getLeftDigit');
@@ -227,7 +227,7 @@
         imStub.returns(true);
         ldStub.returns(leftDigitMock);
         rdStub.returns(rightDigitMock);
-        
+
         let output = App.getOutput();
 
         assert.equal(ldStub.callCount, 1);
@@ -250,27 +250,39 @@
 
     function createMockInputModule(lo, o, ro) {
         let mockInputModule = {};
-        mockInputModule.setInput = input => { };
-        mockInputModule.getLeftOperand = () => { return lo };
-        mockInputModule.getOperator = () => { return o; };
-        mockInputModule.getRightOperand = () => { return ro; };
-        mockInputModule.isValid = () => { };
+        mockInputModule.setInput = input => {};
+        mockInputModule.getLeftOperand = () => {
+            return lo
+        };
+        mockInputModule.getOperator = () => {
+            return o;
+        };
+        mockInputModule.getRightOperand = () => {
+            return ro;
+        };
+        mockInputModule.isValid = () => {};
 
         return mockInputModule;
     }
 
     function createMockArithmeticModule() {
         let mockArithmeticModule = {};
-        mockArithmeticModule.calculate = (lo, o, ro) => { return 0;};
+        mockArithmeticModule.calculate = (lo, o, ro) => {
+            return 0;
+        };
 
         return mockArithmeticModule;
     }
 
     function createMockOutputModule() {
         let mockOutputModule = {};
-        mockOutputModule.setResult = (result) => { };
-        mockOutputModule.getLeftDigit = () => { return 'MOCK'; };
-        mockOutputModule.getRightDigit = () => { return 'MOCK'; };
+        mockOutputModule.setResult = (result) => {};
+        mockOutputModule.getLeftDigit = () => {
+            return 'MOCK';
+        };
+        mockOutputModule.getRightDigit = () => {
+            return 'MOCK';
+        };
 
         return mockOutputModule;
     }

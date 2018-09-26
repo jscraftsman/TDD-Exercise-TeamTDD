@@ -51,16 +51,34 @@
         assertInvalidOperands('/', assert);
     });
 
-    QUnit.todo('has a getLeftOperand() function', assert => {
+    QUnit.test('has a getLeftOperand() function the extracts the value of the left operand from the input', assert => {
+        let expectedLeftOperand = 1;
+        let mockInput = `${expectedLeftOperand} + 2`;
 
+        InputModule.setInput(mockInput);
+        let leftOperand = InputModule.getLeftOperand();
+
+        assert.equal(leftOperand, expectedLeftOperand);
     });
 
-    QUnit.todo('has a getRightOperand() function', assert => {
+    QUnit.test('has a getRightOperand() function extracts the value of the right operand from the input', assert => {
+        let expectedRightOperand = 2;
+        let mockInput = `1 + ${expectedRightOperand}`;
 
+        InputModule.setInput(mockInput);
+        let rightOperand = InputModule.getRightOperand();
+
+        assert.equal(rightOperand, expectedRightOperand);
     });
 
-    QUnit.todo('has a getOperator() function', assert => {
+    QUnit.test('has a getOperator() function extracts the value of the operator from the input', assert => {
+        let expectedOperator = '+';
+        let mockInput = `1 ${expectedOperator} + 2`;
 
+        InputModule.setInput(mockInput);
+        let operator = InputModule.getOperator();
+
+        assert.equal(operator, expectedOperator);
     });
 
     /* Helper functions */
@@ -88,13 +106,15 @@
 
     function assertInvalidLeftOperand(operator, lo, assert) {
         let mockInput = `${lo} ${operator} 1`;
-        InputModule.setInput(mockInput);
-        let isValid = InputModule.isValid();
-        assert.equal(isValid, false);
+        assertOperand(mockInput, assert);
     }
 
     function assertInvalidRightOperand(operator, ro, assert) {
         let mockInput = `1 ${operator} ${ro}`;
+        assertOperand(mockInput, assert);
+    }
+
+    function assertOperand(mockInput, assert) {
         InputModule.setInput(mockInput);
         let isValid = InputModule.isValid();
         assert.equal(isValid, false);
