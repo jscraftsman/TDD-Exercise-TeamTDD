@@ -214,6 +214,7 @@
     });
 
     // @TODO: Refactor. DRY
+    // @TODO: Refactor getLeftDigit to getLeftDigitMap
     QUnit.test('has a getOutput() function that returns the results from OutputModule', assert => {
         let leftDigitMock = DISPLAY_MAP.ONE;
         let rightDigitMock = DISPLAY_MAP.TWO;
