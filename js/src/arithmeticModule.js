@@ -4,8 +4,11 @@
     'use strict';
 
     const ArithmeticModule = {
-        calculate: function () {
-            return 1;
+        calculate: function (lo, o, ro) {
+            if (o === '+') return lo + ro;
+            if (o === '-') return lo - ro;
+            if (o === 'x') return lo * ro;
+            if (o === '/') return lo / ro;
         }
     };
 
