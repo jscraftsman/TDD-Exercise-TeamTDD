@@ -13,7 +13,6 @@
         let mockInput = 'MOCK';
 
         InputModule.INPUT = 'RANDOM';
-
         InputModule.setInput(mockInput);
 
         assert.equal(InputModule.INPUT, mockInput);
@@ -51,7 +50,7 @@
         assertInvalidOperands('/', assert);
     });
 
-    QUnit.test('has a getLeftOperand() function the extracts the value of the left operand from the input', assert => {
+    QUnit.test('has a getLeftOperand() function the extracts the int value of the left operand from the input', assert => {
         let expectedLeftOperand = 1;
         let mockInput = `${expectedLeftOperand} + 2`;
 
@@ -61,7 +60,7 @@
         assert.equal(leftOperand, expectedLeftOperand);
     });
 
-    QUnit.test('has a getRightOperand() function extracts the value of the right operand from the input', assert => {
+    QUnit.test('has a getRightOperand() function extracts the int value of the right operand from the input', assert => {
         let expectedRightOperand = 2;
         let mockInput = `1 + ${expectedRightOperand}`;
 

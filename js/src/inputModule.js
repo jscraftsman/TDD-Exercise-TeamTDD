@@ -47,9 +47,14 @@
     function parseInput() {
         let parts = InputModule.INPUT.split(' ');
 
-        PARTS.leftOperand = parts[0] || '';
+        PARTS.leftOperand = parseNumber(parts[0]);
         PARTS.operator = parts[1] || '';
-        PARTS.rightOperand = parts[2] || '';
+        PARTS.rightOperand = parseNumber(parts[2]);
+    }
+
+    function parseNumber(num) {
+        let n = isNotDecimal(num) ? Number.parseFloat(num) : Number.parseInt(num);
+        return typeof (n) === 'number' ? n : '';
     }
 
     function hasIncorrectNumberOfParts() {
@@ -57,7 +62,7 @@
     }
 
     function isNotNumber(num) {
-        return Number.isNaN(num);
+        return (typeof (num) !== 'number') || Number.isNaN(num);
     }
 
     function isNotDecimal(num) {
@@ -91,7 +96,6 @@
     function isNotDivision(o) {
         return o !== '/';
     }
-
 
     window.InputModule = InputModule;
 
