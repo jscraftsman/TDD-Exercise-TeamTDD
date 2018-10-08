@@ -3,6 +3,9 @@
 (() => {
     'use strict';
 
+    let leftResultMap = null;
+    let rightResultMap = null;
+
     const OutputModule = {
         DISPLAY_MAP: {
             NEGATIVE: 'g',
@@ -27,19 +30,63 @@
         RESULT: 0,
 
         setResult: function (newValue) {
-            OutputModule.RESULT = newValue;
+            OutputModule.RESULT = newValue.toString();
+            parseResult();
         },
 
         getLeftDigit: function () {
-            // @TODO: Refactor to a mapping instead of a number result
-            return OutputModule.RESULT.toString().split('')[0];
+            return leftResultMap;
         },
 
         getRightDigit: function () {
-            // @TODO: Refactor to a mapping instead of a number result
-            return OutputModule.RESULT.toString().split('')[1];
+            return rightResultMap;
         }
     };
+
+    function parseResult() {
+        let parsedResult = OutputModule.RESULT.split('');
+
+        if (isOneDigit(parsedResult)) {
+            leftResultMap = mapDisplay();
+            rightResultMap = mapDisplay(parsedResult[0]);
+        } else {
+            leftResultMap = mapDisplay(parsedResult[0]);
+            rightResultMap = mapDisplay(parsedResult[1]);
+        }
+    }
+
+    function isOneDigit(digitCount) {
+        return digitCount.length < 2;
+    }
+
+    function mapDisplay(digit) {
+        if (digit === undefined) return OutputModule.DISPLAY_MAP.EMPTY;
+
+        switch (digit) {
+            case '0':
+                return OutputModule.DISPLAY_MAP.ZERO;
+            case '1':
+                return OutputModule.DISPLAY_MAP.ONE;
+            case '2':
+                return OutputModule.DISPLAY_MAP.TWO;
+            case '3':
+                return OutputModule.DISPLAY_MAP.THREE;
+            case '4':
+                return OutputModule.DISPLAY_MAP.FOUR;
+            case '5':
+                return OutputModule.DISPLAY_MAP.FIVE;
+            case '6':
+                return OutputModule.DISPLAY_MAP.SIX;
+            case '7':
+                return OutputModule.DISPLAY_MAP.SEVEN;
+            case '8':
+                return OutputModule.DISPLAY_MAP.EIGHT;
+            case '9':
+                return OutputModule.DISPLAY_MAP.NINE;
+            default:
+                return OutputModule.DISPLAY_MAP.EMPTY;
+        }
+    }
 
     window.OutputModule = OutputModule;
 

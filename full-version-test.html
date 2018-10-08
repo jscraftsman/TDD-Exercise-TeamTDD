@@ -12,12 +12,18 @@
 <body>
     <div id="qunit"></div>
     <div id="qunit-fixture">
-        <div id="output">
-            <img src="img/empty.png" alt="Left Digit" id="left-digit">
-            <img src="img/empty.png" alt="Right Digit" id="right-digit">
+        <div id="app">
+            <div id="output">
+                <img src="img/empty.png" alt="Left Digit" id="left-digit">
+                <img src="img/empty.png" alt="Right Digit" id="right-digit">
+            </div>
+            <div id="error-container">
+                <span id="error"></span>
+            </div>
+            <div id="input-container">
+                <input id='input' />
+            </div>
         </div>
-        <span id="error"></span>
-        <input id="input" />
     </div>
     <script src="js/lib/qunit-2.6.2.js"></script>
     <script src="js/lib//sinon-6.3.4.js"></script>
