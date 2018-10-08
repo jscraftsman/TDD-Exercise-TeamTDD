@@ -50,13 +50,22 @@
             leftResultMap = mapDisplay();
             rightResultMap = mapDisplay(parsedResult[0]);
         } else {
-            leftResultMap = mapDisplay(parsedResult[0]);
-            rightResultMap = mapDisplay(parsedResult[1]);
+            if (isDecimal(parsedResult)) {
+                leftResultMap = mapDisplay(parsedResult[0] + parsedResult[1]);
+                rightResultMap = mapDisplay(parsedResult[2]);
+            } else {
+                leftResultMap = mapDisplay(parsedResult[0]);
+                rightResultMap = mapDisplay(parsedResult[1]);
+            }
         }
     }
 
-    function isOneDigit(digitCount) {
-        return digitCount.length < 2;
+    function isOneDigit(digits) {
+        return digits.length < 2;
+    }
+
+    function isDecimal(digits) {
+        return digits.length === 3;
     }
 
     function mapDisplay(digit) {
@@ -85,6 +94,16 @@
                 return OutputModule.DISPLAY_MAP.NINE;
             case '-':
                 return OutputModule.DISPLAY_MAP.NEGATIVE;
+            case '0.':
+                return OutputModule.DISPLAY_MAP.ZERO_POINT;
+            case '1.':
+                return OutputModule.DISPLAY_MAP.ONE_POINT;
+            case '2.':
+                return OutputModule.DISPLAY_MAP.TWO_POINT;
+            case '3.':
+                return OutputModule.DISPLAY_MAP.THREE_POINT;
+            case '4.':
+                return OutputModule.DISPLAY_MAP.FOUR_POINT;
             default:
                 return OutputModule.DISPLAY_MAP.EMPTY;
         }
