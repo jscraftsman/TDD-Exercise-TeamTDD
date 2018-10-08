@@ -83,6 +83,8 @@
                 return OutputModule.DISPLAY_MAP.EIGHT;
             case '9':
                 return OutputModule.DISPLAY_MAP.NINE;
+            case '-':
+                return OutputModule.DISPLAY_MAP.NEGATIVE;
             default:
                 return OutputModule.DISPLAY_MAP.EMPTY;
         }
